@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardText, CardImg, CardImgOverlay, CardTitle} from 'reactstrap';
+import DishDetail from './DishdetailComponent'
 
 //defining a new component 'Menu'
 class Menu extends Component {
@@ -11,36 +12,41 @@ class Menu extends Component {
         this.state = {
             selectedDish: null
         }
-        
+        console.log('Component method constructor called');
     }
 
     onDishSelect(dish)
     {
+        console.log("Dish selected");
         this.setState({ selectedDish: dish });
     }
 
-    renderDish(dish)
-    {
-        if(dish != null)
-            return(
-                <Card>
-                    <CardImg top  src = {dish.image} alt = {dish.name} />
-                    <CardBody>
-                        <CardTitle> { dish.name } </CardTitle>
-                        <CardText> { dish.description } </CardText>
-                    </CardBody>
-                </Card>
-            );
-        else
-            return(
-                <div> </div>
-            ); 
+    // renderDish(dish)
+    // {
+    //     if(dish != null)
+    //         return(
+    //             <Card>
+    //                 <CardImg top  src = {dish.image} alt = {dish.name} />
+    //                 <CardBody>
+    //                     <CardTitle> { dish.name } </CardTitle>
+    //                     <CardText> { dish.description } </CardText>
+    //                 </CardBody>
+    //             </Card>
+    //         );
+    //     else
+    //         return(
+    //             <div> </div>
+    //         ); 
 
-    }
+    // }
     
+    componentDidMount(){
+        console.log('Menu component componentDidMount called');
+    }
 
     // render returns what will be displayed on the screen
     render(){
+        console.log('menu component render method called');
         const menu = this.props.dishes.map((dish) => {
             return(
                 <div className = "col-12 col-md-5 m-1">
@@ -60,13 +66,13 @@ class Menu extends Component {
                 <div className = "row">
                         {menu}
                 </div>
-                <div className = "row">
-                    <div className = "col-12 col-md-5 m-1">
-                        {this.renderDish(this.state.selectedDish)}
-                    </div>
-                </div>
+                
+                {this.state.selectedDish != null ? <div className = "row">
+                    <DishDetail dish = {this.state.selectedDish} comments = {this.state.selectedDish.comments}/>
+                </div> : <div/>}
             </div>
         ); 
+        
     }
 }
 
