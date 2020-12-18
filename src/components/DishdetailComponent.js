@@ -1,23 +1,19 @@
 import React, { Component } from 'react';
 import { Card, CardBody, CardText, CardImg, CardTitle} from 'reactstrap';
-import moment from 'moment';
+
 
 class DishDetail extends Component{
 
-    constructor(props)
-    {
-        super(props);
-    }
 
-    renderDish()
+    renderDish(dishSelected)
     {
-        if(this.props.dish != null)
+        if(dishSelected != null)
         return(
-            <Card key = {this.props.dish.id}>
-                <CardImg top  src = {this.props.dish.image} alt = {this.props.dish.name} />
+            <Card key = {dishSelected.id}>
+                <CardImg top  src = {dishSelected.image} alt = {dishSelected.name} />
                 <CardBody>
-                            <CardTitle> { this.props.dish.name } </CardTitle>
-                            <CardText> { this.props.dish.description } </CardText>
+                            <CardTitle> { dishSelected.name } </CardTitle>
+                            <CardText> { dishSelected.description } </CardText>
                 </CardBody>
             </Card>
             );
@@ -28,63 +24,59 @@ class DishDetail extends Component{
       
     }
 
-    renderComments()
+    renderComments(dishSelected)
     {
-        const comm = this.props.comments.map((i) => {
+        // const comm = dishSelected.comments.map((i) => {
+        //     return(
+        //         <div >   
+        //             <ul class = "list-unstyled">
+        //                 <li> {i.comment}</li>
+        //                 <li>-- {i.author} , {new Intl.DateTimeFormat('en-US',{year: 'numeric', month: 'short', day:'2-digit'}).format(new Date(Date.parse(i.date)))} </li>
+        //             </ul> 
+        //         </div>
+        //     );
+
+        // });
+    
+        if(dishSelected != null && dishSelected.comments != null){
+            const comm = dishSelected.comments.map((i) => {
+                return(
+                    <div >   
+                        <ul class = "list-unstyled">
+                            <li> {i.comment}</li>
+                            <li>-- {i.author} , {new Intl.DateTimeFormat('en-US',{year: 'numeric', month: 'short', day:'2-digit'}).format(new Date(Date.parse(i.date)))} </li>
+                        </ul> 
+                    </div>
+                );
+    
+            });
             return(
-                <div >   
-                    <ul class = "list-unstyled">
-                        <li> {i.comment}</li>
-                        <li>-- {i.author} , {moment(i.date).format('MMM DD, YYYY')}</li>
-                    </ul> 
+                <div>
+                    <Card key = {this.props.dish.id}>
+                        <h4> Comments </h4>
+                        {comm}
+                    </Card>
                 </div>
-            );
 
-        });
-
+        );}
+        else
         return(
-            <div>
-                <Card key = {this.props.dish.id}>
-                    <h4> Comments </h4>
-                    {comm}
-                </Card>
-            </div>
+            <div></div>
+        )
 
-        );
-        // if (this.props.dish != null)
-        // return(
-                
-        //             <Card key = {this.props.dish.id}>
-        //                 <h4> Comments </h4>
-                        
-        //                     <CardBody>
-        //                     <ul class = "list-unstyled">
-        //                         <li> {}</li>
-        //                     </ul>
-        //                     <ul class = "list-inline">
-        //                         <li class = "list-inline-item"> ---  </li>
-        //                         <li class = "list-inline-item">{this.props.comments.author}</li>
-        //                         <li class = "list-inline-item">{this.props.comments.date}</li>
-        //                     </ul> 
-        //                     </CardBody>
-        //             </Card>      
-        // );
-        // else
-        // return(
-        //     <div></div>
-        // );
     }
 
     render()
     {
+        console.log(this.props.dish);
         return(
          <div className = "container" >
                 <div class = "row">
                     <div class = "col-12 col-md-5 m-1">
-                        {this.renderDish()}
+                        {this.renderDish(this.props.dish[0])}
                     </div>  
                     <div class = "col-12 col-md-5 m-1">
-                        {this.renderComments()}
+                        {this.renderComments(this.props.dish[0])}
                     </div>
                 </div>
         </div>
