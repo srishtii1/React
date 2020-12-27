@@ -1,6 +1,7 @@
 import React , {Component} from 'react';
-import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col } from 'reactstrap';
+import { Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback } from 'reactstrap';
 import { Link } from 'react-router-dom';
+
 
 class Contact extends Component
  {
@@ -14,12 +15,19 @@ class Contact extends Component
             email:'',
             agree: false,
             contactType:'Tel.',
-            message:''
+            message:'',
+            touched:{
+                firstname:false,
+                lastname:false,
+                telnum:false,
+                email:false
+            }
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
-    };
+        this.handleBlur = this.handleBlur.bind(this);
+    }
 
     handleInputChange(event)
     {
@@ -40,9 +48,44 @@ class Contact extends Component
         //default behavior is going to next page after submitting. we are preventing that .
     }
 
+    handleBlur = (field) => (evt) => 
+    {
+        this.setState({
+            touched: { ...this.state.touched, [field]: true}
+        }
+        );
+    }
+
+    validate(firstname, lastname, telnum, email)
+    {
+        const errors = {
+            firstname: '',
+            lastname: '',
+            telnum:'',
+            email:'',
+        };
+        if (this.state.touched.firstname && firstname.length <= 1 )
+            errors.firstname = "First Name must be greater than 1 characters";
+        else if (this.state.touched.firstname && firstname.length > 10 )
+            errors.firstname = "First Name must be less than 10 characters";
+        else if (this.state.touched.lastname && lastname.length < 1 )
+            errors.lastname = "Last Name must be greater than 1 characters";
+
+        const reg = /^\d+$/; 
+        // this expression means that all characters of reg (regular expression) are numeric
+        //reg.test is a built in method for the regular expression. It returns a boolean indicating whether the given pattern exists in teh string or not 
+        if(this.state.touched.telnum && !reg.test(telnum))
+            errors.telnum = "Tel number must be numeric";
+
+        if(this.state.touched.email && email.split('').filter(x=> x==='@').length !== 1)
+            errors.email = "Email must contain @";
+
+        return errors;
+    }
+
     render()
     {
-       
+    const errors = this.validate(this.state.firstname, this.state.lastname, this.state.telnum, this.state.email);   
     return(
         <div className="container">
             <div className = "row">
@@ -86,17 +129,25 @@ class Contact extends Component
                         <FormGroup row>
                             <Label htmlFor = "firstname" md={2}> First Name </Label>
                             <Col md = {10}>
-                                <Input type = "text" id = "firstName" name = "firstname" placeholder = "enter your first name"
+                                <Input type = "text" id = "firstname" name = "firstname" placeholder = "enter your first name"
                                 value = {this.state.firstname}
+                                valid = {errors.firstname === ''}
+                                invalid = {errors.firstname !== ''}
+                                onBlur = {this.handleBlur('firstname')}
                                 onChange = {this.handleInputChange}/>
+                                <FormFeedback>{errors.firstname}</FormFeedback>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
                             <Label htmlFor = "lastname" md={2}> Last Name </Label>
                             <Col md = {10}>
-                                <Input type = "text" id = "lastName" name = "lastname" placeholder = "enter your last name"
+                                <Input type = "text" id = "lastname" name = "lastname" placeholder = "enter your last name"
                                 value = {this.state.lastname}
+                                valid = {errors.lastname === ''}
+                                invalid = {errors.lastname !== ''}
+                                onBlur = {this.handleBlur('lastname')}
                                 onChange = {this.handleInputChange}/>
+                                <FormFeedback>{errors.lastname}</FormFeedback>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
@@ -104,7 +155,11 @@ class Contact extends Component
                             <Col md = {10}>
                                 <Input type = "tel" id = "telnum" name = "telnum" placeholder = "enter your Ph. Number"
                                 value = {this.state.telnum}
+                                valid = {errors.telnum === ''}
+                                invalid = {errors.telnum !== ''}
+                                onBlur = {this.handleBlur('telnum')}
                                 onChange = {this.handleInputChange}/>
+                                <FormFeedback>{errors.telnum}</FormFeedback>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
@@ -112,7 +167,11 @@ class Contact extends Component
                             <Col md = {10}>
                                 <Input type = "email" id = "email" name = "email" placeholder = "enter your email"
                                 value = {this.state.email}
+                                valid = {errors.email === ''}
+                                invalid = {errors.email !== ''}
+                                onBlur = {this.handleBlur('email')}
                                 onChange = {this.handleInputChange}/>
+                                <FormFeedback>{errors.email}</FormFeedback>
                             </Col>
                         </FormGroup>
                         <FormGroup row>
