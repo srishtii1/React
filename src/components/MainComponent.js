@@ -7,7 +7,8 @@ import Home from'./HomeComponent';
 import Contact from './ContactComponent';
 import About from './AboutusComponent';
 import { Switch, Route, Redirect, withRouter} from 'react-router-dom'; 
-import {connect, Connect} from 'react-redux';
+import {connect} from 'react-redux';
+import { addComment } from '../redux/ActionCreators';
 // main component will obtain the state from "STORE"
 
 const mapStateToProps = state => {
@@ -20,12 +21,12 @@ const mapStateToProps = state => {
   }
 };
 
+const mapDispatchToProps = (dispatch) => ({
+    addComment: (dishId,rating,author,comment) => dispatch(addComment(dishId,rating,author,comment))
+});
 
 class Main extends Component {
 
-  constructor(props){
-    super(props);
-  }
 
   render() {
     const HomePage = () => {
@@ -43,6 +44,7 @@ class Main extends Component {
       return(
         <DishDetail dish = {this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
           comments = {this.props.comments.filter ((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+          addComment = {this.props.addComment}
         /> 
       );
       else
@@ -67,6 +69,6 @@ class Main extends Component {
   }
 }
 
-export default withRouter(connect(mapStateToProps)(Main));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));
 //used an inline function for calling Menu since we needed to pass props as a parameter
 //redirect is used as a default path when route does not match any of the two options given 
