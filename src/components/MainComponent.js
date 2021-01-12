@@ -8,9 +8,10 @@ import Contact from './ContactComponent';
 import About from './AboutusComponent';
 import { Switch, Route, Redirect, withRouter} from 'react-router-dom'; 
 import {connect} from 'react-redux';
-import { addComment } from '../redux/ActionCreators';
-// main component will obtain the state from "STORE"
+import { addComment,fetchComments,fetchDishes, fetchPromos } from '../redux/ActionCreators';
+import { actions } from "react-redux-form";
 
+// main component will obtain the state from "STORE"
 const mapStateToProps = state => {
 
   return{
@@ -19,31 +20,51 @@ const mapStateToProps = state => {
     promotions: state.promotions,
     leaders: state.leaders
   }
-};
+}
 
 const mapDispatchToProps = (dispatch) => ({
-    addComment: (dishId,rating,author,comment) => dispatch(addComment(dishId,rating,author,comment))
+    addComment: (dishId,rating,author,comment) => dispatch(addComment(dishId,rating,author,comment)),
+    fetchDishes: ()=> {dispatch(fetchDishes())},
+    fetchComments: ()=> {dispatch(fetchComments())},
+    fetchPromos: ()=> {dispatch(fetchPromos())},
+    resetFeedbackForm: () => { dispatch(actions.reset('feedback'))}
 });
 
 class Main extends Component {
 
+  componentDidMount(){
+    this.props.fetchDishes();
+    this.props.fetchComments();
+    this.props.fetchPromos();
+  }
 
   render() {
     const HomePage = () => {
+      console.log("props promo " + this.props.promotions);
+      if (this.props.dishes != null)
       return(
-        <Home dish = {this.props.dishes.filter((dish) => dish.featured)[0]}
-              promotion = {this.props.promotions.filter((promo) => promo.featured)[0]}
-              leader = {this.props.leaders.filter((lead) => lead.featured)[0]}
-        />
-
+        <Home 
+        dish={this.props.dishes.dishes.filter((dish) => dish.featured)[0]}
+        dishesLoading={this.props.dishes.isLoading}
+        dishErrMess={this.props.dishes.errMess}
+        promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
+        promoLoading={this.props.promotions.isLoading}
+        promoErrMess={this.props.promotions.errMess}
+        leader={this.props.leaders.leaders.filter((leader) => leader.featured)[0]}
+    />
       );
+      else return (<div/>);
+     
     }
     console.log(this.props.dishes);
     const DishWithId = ( {match} ) => {
       if (this.props.dishes!= null)
       return(
-        <DishDetail dish = {this.props.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
-          comments = {this.props.comments.filter ((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+        <DishDetail dish = {this.props.dishes.dishes.filter((dish) => dish.id === parseInt(match.params.dishId, 10))[0]}
+          isLoading={this.props.dishes.isLoading}
+          errMess = {this.props.dishes.errMess}
+          comments = {this.props.comments.comments.filter ((comment) => comment.dishId === parseInt(match.params.dishId, 10))}
+          commentsErrMess = {this.props.comments.errMess}
           addComment = {this.props.addComment}
         /> 
       );
@@ -52,6 +73,7 @@ class Main extends Component {
         <div />
       );
     }
+    
     return (
       <div>
         <Header/>
@@ -59,9 +81,9 @@ class Main extends Component {
             <Route path = "/home" component = {HomePage} />
             <Route exact path = "/menu" component = {() => <Menu dishes = {this.props.dishes}/>} />
             <Route path = "/menu/:dishId" component = {DishWithId} />
-            <Route exact path = "/contactus" component = {Contact} />
-            <Route path = "/About" component = {() => <About leaders  = {this.props.leaders}/>} />
-            <Redirect to = "/home" />
+            <Route exact path = "/contactus" component = {() => <Contact resetFeedbackForm = {this.props.resetFeedbackForm}/> } />
+            <Route path = "/About" component = {() => <About leaders  = {this.props.leaders.leaders}/>} />
+            <Redirect to = "/home" component = {HomePage}/>
           </Switch>
         <Footer />
       </div>
