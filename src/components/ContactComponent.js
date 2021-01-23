@@ -7,7 +7,7 @@ const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !(val) || (val.length <= len);
 const minLength = (len) => (val) => (val) && (val.length >= len);
 const isNum = (val) => !isNaN(Number(val));
-const validEmail = (val) => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}/.test(val);
+const validEmail = (val) => /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}/.test(val);
 
 class Contact extends Component
  {
@@ -21,9 +21,9 @@ class Contact extends Component
     handleSubmit(values)
     {
         console.log("Current state is: " +JSON.stringify(values));
-        alert("Current state is: " +JSON.stringify(values));
         this.props.resetFeedbackForm();
-
+        this.props.postFeedback(values.firstname, values.lastname, values.telnum, values.email, values.agree, values.contactType, values.message);
+        alert("Thank You for your feedback! \n" +JSON.stringify(values));
         //default behavior is going to next page after submitting. we are preventing that .
     }
 
@@ -158,6 +158,7 @@ class Contact extends Component
                                 validators = {
                                     {
                                         required, validEmail
+                                   
                                     }
                                 }
                                 />
