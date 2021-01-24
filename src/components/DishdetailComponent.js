@@ -33,7 +33,7 @@ function RenderDish({ dish }) {
   }
 }
 function RenderComments({ comments,postComment, dishId }) {
-  if (comments != null) {
+  if (comments) {
       return (
         <div className = "col-12  m-1">
           <h4>Comments</h4>
@@ -44,7 +44,7 @@ function RenderComments({ comments,postComment, dishId }) {
                   <Fade in> 
                       <li key={comment.id}>
                       <p>{comment.comment}</p>
-                      <p> -- {comment.author} ,{" "}
+                      <p> -- {comment.author} ,{" "},
                         {new Intl.DateTimeFormat("en-US", {
                           year: "numeric",
                           month: "short",
@@ -62,7 +62,7 @@ function RenderComments({ comments,postComment, dishId }) {
       );
     }
     else {
-      return <div></div>;
+      return (<div></div>);
     }
   
 }
